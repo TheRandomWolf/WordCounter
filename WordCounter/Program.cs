@@ -10,12 +10,29 @@ namespace WordCounter
 	{
 		static void Main(string[] args)
 		{
-			string input = Console.ReadLine();
-			string[] splitInput = input.Split(' ');
-			for(int i = 0; i < splitInput.Length; i++)
+			Console.WriteLine("Please choose between inserting a path and inputting text directly. Text/Path");
+			string choice = Console.ReadLine();
+			string input = string.Empty;
+			switch (choice.ToLower())
 			{
-				splitInput[i] = StripPunctuation(splitInput[i]);
+				case "path":
+					Console.Write("Path: ");
+					string path = Console.ReadLine();
+					input = System.IO.File.ReadAllText(@path);
+					break;
+				case "text":
+					Console.Write("Text: ");
+					input = Console.ReadLine();
+					break;
+				default:
+					Console.WriteLine("Invalid input. Please try again and only type in 'text' or 'path'");
+					Console.WriteLine("Press any key to exit.");
+					Console.ReadKey();
+					Environment.Exit(0);
+					break;
 			}
+			string[] splitInput = input.Split(' ');
+			StripPunctuation(splitInput);
 			Dictionary<string, int> countedWords = CountWords(splitInput);
 			List<string> formattedCountedWords = FormatData(countedWords);
 			foreach (string s in formattedCountedWords) Console.WriteLine(s);
@@ -26,7 +43,7 @@ namespace WordCounter
 			Dictionary<string, int> wordsCount = new Dictionary<string, int>();
 			foreach (string s in wordArray)
 			{
-				if (wordsCount.ContainsKey(s.ToLower())) wordsCount[s]++;
+				if (wordsCount.ContainsKey(s.ToLower())) wordsCount[s.ToLower()]++;
 				else wordsCount.Add(s.ToLower(), 1);
 			}
 			return wordsCount;
@@ -40,6 +57,14 @@ namespace WordCounter
 				wordCounts.Add(entry);
 			}
 			return wordCounts;
+		}
+		static string[] StripPunctuation(string[] splitInput)
+		{
+			for (int i = 0; i < splitInput.Length; i++)
+			{
+				splitInput[i] = StripPunctuation(splitInput[i]);
+			}
+			return splitInput;
 		}
 		static string StripPunctuation(string punctuatedString)
 		{
